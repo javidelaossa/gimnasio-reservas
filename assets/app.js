@@ -9,10 +9,6 @@
 import './styles/app.scss';
 import $ from 'jquery';
 import './bootstrap';
-// require ('bootstrap');
-// const $ = require('jquery');
-// start the Stimulus application
-// console.log('hola');
+window.bootstrap = require('bootstrap/dist/js/bootstrap.bundle.js');
+console.log('hola');
 
-// const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-// const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
