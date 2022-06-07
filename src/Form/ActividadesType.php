@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Sala;
+use App\Entity\Usuario;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -18,11 +19,16 @@ class ActividadesType extends AbstractType
             ->add('nombre')
             ->add('h_inicio')
             ->add('h_fin')
+            ->add('imagen', FileType::class)
+            ->add('descripcion')
             ->add('sala', EntityType::class, [
                 'class' => Sala::class,
                 'choice_label' => 'nombre'
             ])
-            ->add('imagen', FileType::class)
+            ->add('monitor', EntityType::class, [
+                'class' => Usuario::class,
+                'choice_label' => 'nombre'
+            ])
             ->add('Crear', SubmitType::class);
     }
 

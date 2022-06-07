@@ -33,7 +33,7 @@ class Actividades
     private $h_fin;
 
     /**
-     * @ORM\OneToOne(targetEntity=Sala::class, cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity=Sala::class, mappedBy="id")
      * @ORM\JoinColumn(nullable=false)
      */
     private $sala;
@@ -125,4 +125,5 @@ class Actividades
 
         return $this;
     }
+
 }

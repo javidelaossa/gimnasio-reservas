@@ -43,9 +43,9 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Reservas::class, inversedBy="usuario")
+     * @ORM\Column(type="string", length=255)
      */
-    private $reservas;
+    private $imagen;
 
     public function __toString(){
         return $this->email;
@@ -152,15 +152,16 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getReservas(): ?Reservas
+    public function getImagen(): ?string
     {
-        return $this->reservas;
+        return $this->imagen;
     }
 
-    public function setReservas(?Reservas $reservas): self
+    public function setImagen(string $imagen): self
     {
-        $this->reservas = $reservas;
+        $this->imagen = $imagen;
 
         return $this;
     }
+
 }

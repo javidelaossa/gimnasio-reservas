@@ -12,9 +12,10 @@
                      alt="imagen-clase">
                 <div class="card-body">
                     <h5 class="card-title">{{ actividad.nombre }} - Núm. sala: {{ actividad.sala.numero }}</h5>
-                    <h5 class="card-title">{{ actividad.hInicio|date('H:i') }} - {{ actividad.hFin|date('H:i') }}</h5>
-                    <p class="card-text">{{ actividad.descripcion }}</p>
+                    <h5 class="card-title">{{ actividad.hinic|date('H:i') }} - {{ actividad.hfin|date('H:i') }}</h5>
+                    <p class="card-text">{{ actividad.descrip }}</p>
                     <a href="reservasAct/{{ actividad.id }}" class="btn btn-primary">Más información</a>
+                    <a href="reservasActdirect/{{ actividad.id }}" class="btn btn-primary">Reservar</a>
                 </div>
             </div>
         {% endfor %}

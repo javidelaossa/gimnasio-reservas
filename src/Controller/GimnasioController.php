@@ -2,11 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Actividad;
 use App\Entity\Actividades;
+use App\Entity\Reserva;
 use App\Entity\Reservas;
 use App\Entity\Sala;
 use App\Entity\Usuario;
 use App\Form\ActividadesType;
+use App\Form\ActividadType;
 use App\Form\ReservasType;
 use App\Form\SalasType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -45,12 +48,33 @@ class GimnasioController extends AbstractController
         $mensaje = $request->query->get('mensaje');
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $entityManager = $this->getDoctrine()->getManager();
-        $actividades = $entityManager->getRepository(Actividades::class)->findAll();
+        $actividades = $entityManager->getRepository(Actividad::class)->findAll();
         return $this->render('gimnasio.html.twig', [
             'controller_name' => 'GimnasioController',
             'actividades' => $actividades,
             'mensaje' => $mensaje
         ]);
+
+    }
+
+    /**
+     * @Route("/reservasActdirect/{id}", name="app_reservasActdirect")
+     */
+
+    public function reservaActividaddirect(Request $request, $id): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $entityManager = $this->getDoctrine()->getManager();
+        $reservas = new Reserva();
+        $actividad = $entityManager->getRepository(Actividad::class)->find($id);
+
+
+        $reservas->setAsistencia(false);
+        $reservas->setUsuario($this->getUser());
+        $reservas->setActividad($actividad);
+        $entityManager->persist($reservas);
+        $entityManager->flush();
+        return $this->redirectToRoute('app_gimnasio');
 
     }
 
@@ -62,8 +86,8 @@ class GimnasioController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $entityManager = $this->getDoctrine()->getManager();
-        $reservas = new Reservas();
-        $actividad = $entityManager->getRepository(Actividades::class)->find($id);
+        $reservas = new Reserva();
+        $actividad = $entityManager->getRepository(Actividad::class)->find($id);
         $form = $this->createFormBuilder($reservas)
 //            ->add('usuario', EntityType::class, [
 //                'class' => Usuario::class
@@ -94,8 +118,9 @@ class GimnasioController extends AbstractController
      */
     public function salas(Request $request): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $roles = $this->getUser()->getRoles();
-        if (in_array("ROLE_ADMIN", $roles)) {
+        if (in_array("ROLE_ADMIN", $roles) || in_array("ROLE_MONITOR", $roles)) {
             $sala = new Sala();
             $form = $this->createForm(SalasType::class, $sala);
             $form->handleRequest($request);
@@ -124,8 +149,8 @@ class GimnasioController extends AbstractController
     {
         $roles = $this->getUser()->getRoles();
         if (in_array("ROLE_ADMIN", $roles)) {
-            $actividades = new Actividades();
-            $form = $this->createForm(ActividadesType::class, $actividades);
+            $actividades = new Actividad();
+            $form = $this->createForm(ActividadType::class, $actividades);
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
                 $imagen = $form->get('imagen')->getData();

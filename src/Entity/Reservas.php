@@ -24,7 +24,7 @@ class Reservas
     private $usuario;
 
     /**
-     * @ORM\OneToOne(targetEntity=Actividades::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Actividad::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $actividad;
@@ -51,12 +51,12 @@ class Reservas
         return $this;
     }
 
-    public function getActividad(): ?Actividades
+    public function getActividad(): ?Actividad
     {
         return $this->actividad;
     }
 
-    public function setActividad(Actividades $actividad): self
+    public function setActividad(Actividad $actividad): self
     {
         $this->actividad = $actividad;
 

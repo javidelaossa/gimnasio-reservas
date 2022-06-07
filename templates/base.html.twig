@@ -126,7 +126,9 @@
             <li>
                 <div class="profile-details">
                     <div class="profile-content">
-                        <img src="" alt="profileImg">
+                        {% if app.user %}
+                            <img src="{{ asset('uploads/imagenes/') }}{{ app.user.imagen }}" alt="profileImg">
+                        {% endif %}
                     </div>
                     <div class="name-job">
                         {% if app.user %}
