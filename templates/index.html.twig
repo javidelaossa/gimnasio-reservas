@@ -18,7 +18,13 @@
     </style>
 
     <div class="example-wrapper">
-
+        <div class="row">
+            <div class="col-6">hola</div>
+            <div class="col-6">adios</div>
+        </div>
+        <button type="button" class="btn btn-lg btn-danger" data-bs-toggle="popover" title="Popover title"
+                data-bs-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover
+        </button>
         <h1>Hello {{ mensaje }}! ✅</h1>
         {% for actividad in actividades %}
             <a href="reservasAct/{{ actividad.id }}">
