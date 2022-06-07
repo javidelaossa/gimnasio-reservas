@@ -3,7 +3,7 @@
 {% block title %}Hello GimnasioController!{% endblock %}
 
 {% block body %}
-    <div class="row">
+        <div class="row">
         <h1>Hello {{ mensaje }}! ✅</h1>
         {% for actividad in actividades %}
 
@@ -19,13 +19,4 @@
             </div>
         {% endfor %}
     </div>
-    {#        {% for actividad in actividades %} #}
-    {#            <a href="reservasAct/{{ actividad.id }}"> #}
-    {#                <p>{{ actividad.nombre }}</p> #}
-    {#                <p>{{ actividad.sala.nombre }}</p> #}
-    {#                <p>{{ actividad.hInicio|date('H:i:s') }}</p> #}
-    {#                <p>{{ actividad.hFin|date('H:i:s') }}</p> #}
-    {#                <img src="{{ asset('uploads/imagenes/') }}{{ actividad.imagen }}" alt="Logo"> #}
-    {#            </a> #}
-    {#        {% endfor %} #}
 {% endblock %}

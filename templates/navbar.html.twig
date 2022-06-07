@@ -8,7 +8,7 @@
         <ul class="nav-links">
             <li>
                 <a href="#">
-                    <i class='bx bx-grid-alt' ></i>
+                    <i class='bx bx-grid-alt'></i>
                     <span class="link_name">Dashboard</span>
                 </a>
                 <ul class="sub-menu blank">
@@ -18,10 +18,10 @@
             <li>
                 <div class="iocn-link">
                     <a href="#">
-                        <i class='bx bx-collection' ></i>
+                        <i class='bx bx-collection'></i>
                         <span class="link_name">Category</span>
                     </a>
-                    <i class='bx bxs-chevron-down arrow' ></i>
+                    <i class='bx bxs-chevron-down arrow'></i>
                 </div>
                 <ul class="sub-menu">
                     <li><a class="link_name" href="#">Category</a></li>
@@ -33,10 +33,10 @@
             <li>
                 <div class="iocn-link">
                     <a href="#">
-                        <i class='bx bx-book-alt' ></i>
+                        <i class='bx bx-book-alt'></i>
                         <span class="link_name">Posts</span>
                     </a>
-                    <i class='bx bxs-chevron-down arrow' ></i>
+                    <i class='bx bxs-chevron-down arrow'></i>
                 </div>
                 <ul class="sub-menu">
                     <li><a class="link_name" href="#">Posts</a></li>
@@ -47,7 +47,7 @@
             </li>
             <li>
                 <a href="#">
-                    <i class='bx bx-pie-chart-alt-2' ></i>
+                    <i class='bx bx-pie-chart-alt-2'></i>
                     <span class="link_name">Analytics</span>
                 </a>
                 <ul class="sub-menu blank">
@@ -56,7 +56,7 @@
             </li>
             <li>
                 <a href="#">
-                    <i class='bx bx-line-chart' ></i>
+                    <i class='bx bx-line-chart'></i>
                     <span class="link_name">Chart</span>
                 </a>
                 <ul class="sub-menu blank">
@@ -66,10 +66,10 @@
             <li>
                 <div class="iocn-link">
                     <a href="#">
-                        <i class='bx bx-plug' ></i>
+                        <i class='bx bx-plug'></i>
                         <span class="link_name">Plugins</span>
                     </a>
-                    <i class='bx bxs-chevron-down arrow' ></i>
+                    <i class='bx bxs-chevron-down arrow'></i>
                 </div>
                 <ul class="sub-menu">
                     <li><a class="link_name" href="#">Plugins</a></li>
@@ -80,7 +80,7 @@
             </li>
             <li>
                 <a href="#">
-                    <i class='bx bx-compass' ></i>
+                    <i class='bx bx-compass'></i>
                     <span class="link_name">Explore</span>
                 </a>
                 <ul class="sub-menu blank">
@@ -98,7 +98,7 @@
             </li>
             <li>
                 <a href="#">
-                    <i class='bx bx-cog' ></i>
+                    <i class='bx bx-cog'></i>
                     <span class="link_name">Setting</span>
                 </a>
                 <ul class="sub-menu blank">
@@ -111,10 +111,14 @@
                         <img src="image/profile.jpg" alt="profileImg">
                     </div>
                     <div class="name-job">
-                        <div class="profile_name">Prem Shahi</div>
-                        <div class="job">Web Desginer</div>
+                        {% if app.user %}
+                            <div class="profile_name">{{ app.user.nombre }}</div>
+                            <div class="job">Web Desginer</div>
+                        {% endif %}
                     </div>
-                    <i class='bx bx-log-out' ></i>
+                    <a href="/logout">
+                        <i class='bx bx-log-out'></i>
+                    </a>
                 </div>
             </li>
         </ul>
