@@ -25,6 +25,17 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 class GimnasioController extends AbstractController
 {
     /**
+     * @Route("/", name="home")
+     */
+
+    public function home(): Response
+    {
+        return $this->render('home.html.twig', [
+            'controller_name' => 'GimnasioController'
+        ]);
+    }
+
+    /**
      * @Route("/gimnasio", name="app_gimnasio")
      */
 
@@ -35,7 +46,7 @@ class GimnasioController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $entityManager = $this->getDoctrine()->getManager();
         $actividades = $entityManager->getRepository(Actividades::class)->findAll();
-        return $this->render('index.html.twig', [
+        return $this->render('gimnasio.html.twig', [
             'controller_name' => 'GimnasioController',
             'actividades' => $actividades,
             'mensaje' => $mensaje

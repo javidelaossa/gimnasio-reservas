@@ -5,6 +5,7 @@
     <title>{% block title %}Welcome!{% endblock %}</title>
     <link rel="icon"
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
     {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
@@ -15,13 +16,14 @@
     {% endblock %}
 </head>
 <body>
-<header>
-    {% block header %}
-        {{ include ('navbar.html.twig') }}
-    {% endblock %}
-</header>
-<div class="container">
-    {% block body %}{% endblock %}
-</div>
+{% block header %}
+    {{ include ('navbar.html.twig') }}
+{% endblock %}
+<section class="home-section">
+    <div class="home-content">
+        <i class='bx bx-menu'></i>
+        {% block body %}{% endblock %}
+    </div>
+</section>
 </body>
 </html>

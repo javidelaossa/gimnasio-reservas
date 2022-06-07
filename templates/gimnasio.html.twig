@@ -8,7 +8,8 @@
         {% for actividad in actividades %}
 
             <div class="card" style="width: 18rem;">
-                <img src="{{ asset('uploads/imagenes/') }}{{ actividad.imagen }}" class="card-img-top" alt="imagen-clase">
+                <img src="{{ asset('uploads/imagenes/') }}{{ actividad.imagen }}" class="card-img-top"
+                     alt="imagen-clase">
                 <div class="card-body">
                     <h5 class="card-title">{{ actividad.nombre }} - Núm. sala: {{ actividad.sala.numero }}</h5>
                     <h5 class="card-title">{{ actividad.hInicio|date('H:i') }} - {{ actividad.hFin|date('H:i') }}</h5>
