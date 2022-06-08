@@ -3,21 +3,22 @@
 {% block title %}Hello GimnasioController!{% endblock %}
 
 {% block body %}
-        <div class="row">
-        <h1>Hello {{ mensaje }}! ✅</h1>
-        {% for actividad in actividades %}
-
-            <div class="card" style="width: 18rem;">
-                <img src="{{ asset('uploads/imagenes/') }}{{ actividad.imagen }}" class="card-img-top"
-                     alt="imagen-clase">
-                <div class="card-body">
-                    <h5 class="card-title">{{ actividad.nombre }} - Núm. sala: {{ actividad.sala.numero }}</h5>
-                    <h5 class="card-title">{{ actividad.hinic|date('H:i') }} - {{ actividad.hfin|date('H:i') }}</h5>
-                    <p class="card-text">{{ actividad.descrip }}</p>
-                    <a href="reservasAct/{{ actividad.id }}" class="btn btn-primary">Más información</a>
-                    <a href="reservasActdirect/{{ actividad.id }}" class="btn btn-primary">Reservar</a>
+    <div class="container">
+        <div class="row justify-content-center align-items-center vh-100 mt-3">
+            {% for actividad in actividades %}
+                <div class="card m-3" style="width: 18rem;">
+                    <img src="{{ asset('uploads/imagenes/') }}{{ actividad.nombre.imagen }}" class="card-img-top"
+                         alt="imagen-clase">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ actividad.nombre.nombre }} - Núm. sala: {{ actividad.sala.numero }}</h5>
+                        <h5 class="card-title">{{ actividad.hinic|date('H:i') }} - {{ actividad.hfin|date('H:i') }}</h5>
+                        <p class="card-text">{{ actividad.nombre.descrip }}</p>
+                        <a href="reservasAct/{{ actividad.id }}" class="btn btn-primary">Más información</a>
+                        <a href="reservasActdirect/{{ actividad.id }}" class="btn btn-primary">Reservar</a>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
+
 {% endblock %}

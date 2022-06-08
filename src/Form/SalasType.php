@@ -19,6 +19,9 @@ class SalasType extends AbstractType
             ->add('nombre', null, [
                 'label' => 'Nombre sala:'
             ])
+            ->add('aforo', null, [
+                'label' => 'Aforo:'
+            ])
             ->add('Crear', SubmitType::class,
                 array('attr' => array('class' => 'btn btn-primary')));
     }

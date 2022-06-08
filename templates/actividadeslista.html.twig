@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Crear actividad{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row justify-content-center align-items-center vh-100 mt-3">
+            {% for actividad in actividades %}
+                <div class="card m-3" style="width: 18rem;">
+                    <img src="{{ asset('uploads/imagenes/') }}{{ actividad.imagen }}" class="card-img-top"
+                         alt="imagen-clase">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ actividad.nombre }}</h5>
+                        <p class="card-text">{{ actividad.descrip }}</p>
+                        <a href="actividad/{{ actividad.id }}" class="btn btn-primary">Ver todas</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

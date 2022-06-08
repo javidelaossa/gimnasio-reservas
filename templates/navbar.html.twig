@@ -9,19 +9,23 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ms-auto">
                     {% if not app.user %}
-                        <li class="nav-item"><a class="nav-link" href="/register">Sign Up</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ path ('app_login') }}">Iniciar sesión</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ path ('app_register') }}">Registrarse</a></li>
                     {% endif %}
                     {% if app.user %}
                         <li class="nav-item"><a class="nav-link" href="{{ path ('app_gimnasio') }}">Reservar</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/login">Actividades</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ path ('app_actividades') }}">Actividades</a></li>
                     {% endif %}
                     {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_MONITOR') %}
                         <li class="nav-item"><a class="nav-link" href="{{ path ('app_salas') }}">Asistencia</a></li>
                     {% endif %}
                     {% if is_granted('ROLE_ADMIN') %}
                         <li class="nav-item"><a class="nav-link" href="{{ path ('app_salas') }}">Crear salas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ path ('app_crearActividadesIndForm') }}">Crear act. individual</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ path ('app_actividadescrear') }}">Crear actividades</a></li>
+                    {% endif %}
+                    {% if app.user %}
+                        <li class="nav-item"><a class="nav-link" href="{{ path('app_logout') }}">{{ app.user.nombre }}</a></li>
                     {% endif %}
                 </ul>
             </div>

@@ -6,9 +6,11 @@ use App\Entity\Actividad;
 use App\Entity\Actividades;
 use App\Entity\Reserva;
 use App\Entity\Sala;
+use App\Entity\TipoAct;
 use App\Entity\Usuario;
 use App\Form\ActividadType;
 use App\Form\SalasType;
+use App\Form\TipoActType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -25,7 +27,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 class GimnasioController extends AbstractController
 {
     /**
-         * @Route("/", name="home")
+     * @Route("/", name="home")
      */
 
     public function home(): Response
@@ -41,8 +43,8 @@ class GimnasioController extends AbstractController
 
     public function index(Request $request, AuthenticationUtils $authenticationUtils): Response
     {
-        $mensaje = $request->query->get('mensaje');
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $mensaje = $request->query->get('mensaje');
         $entityManager = $this->getDoctrine()->getManager();
         $actividades = $entityManager->getRepository(Actividad::class)->findAll();
         return $this->render('gimnasio.html.twig', [
@@ -50,7 +52,6 @@ class GimnasioController extends AbstractController
             'actividades' => $actividades,
             'mensaje' => $mensaje
         ]);
-
     }
 
     /**
@@ -83,14 +84,70 @@ class GimnasioController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $entityManager = $this->getDoctrine()->getManager();
-        $actividades = $entityManager->getRepository(Actividades::class)->findAll();
-        return $this->render('actividades.html.twig', [
-            'controller_name' => 'Actividades',
+        $actividades = $entityManager->getRepository(TipoAct::class)->findAll();
+        return $this->render('actividadeslista.html.twig', [
             'actividades' => $actividades,
         ]);
 
     }
 
+    /**
+     * @Route("/crearActividadesInd", name="app_crearActividadesInd")
+     */
+
+    public function crearActividadesInd(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $entityManager = $this->getDoctrine()->getManager();
+        $actividades = $entityManager->getRepository(Actividades::class)->findAll();
+        return $this->render('actividadeslista.html.twig', [
+            'actividades' => $actividades,
+        ]);
+    }
+
+    /**
+     * @Route("/crearActividadesIndForm", name="app_crearActividadesIndForm")
+     */
+
+    public function crearActividadesIndForm(Request $request, SluggerInterface $slugger): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $roles = $this->getUser()->getRoles();
+        if (in_array("ROLE_ADMIN", $roles)) {
+            $tipoAct = new TipoAct();
+            $form = $this->createForm(TipoActType::class, $tipoAct);
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $imagen = $form->get('imagen')->getData();
+                if ($imagen) {
+                    $originalFilename = pathinfo($imagen->getClientOriginalName(), PATHINFO_FILENAME);
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename . '-' . uniqid() . '.' . $imagen->guessExtension();
+                    try {
+                        $imagen->move(
+                            $this->getParameter('imagen_directory'),
+                            $newFilename
+                        );
+                    } catch (FileException $e) {
+                        throw new \Exception('Ocurrió un error');
+                    }
+                    $tipoAct->setImagen($newFilename);
+                }
+                $entityManager = $this->getDoctrine()->getManager();
+                $tipoAct = $form->getData();
+                $entityManager->persist($tipoAct);
+                $entityManager->flush();
+                return $this->redirectToRoute('app_crearActividadesIndForm');
+            }
+            return $this->render('actividadeslistaform.html.twig', [
+                'form' => $form->createView()
+            ]);
+        } else {
+            return $this->redirectToRoute('app_gimnasio', [
+                'mensaje' => 'Necesitas ser admin para entrar',
+            ]);
+        }
+    }
 
     /**
      * @Route("/reservasActdirect/{id}", name="app_reservasActdirect")
@@ -112,6 +169,23 @@ class GimnasioController extends AbstractController
         return $this->redirectToRoute('app_gimnasio');
 
     }
+
+    /**
+     * @Route("/actividad/{id}", name="app_actividadesind")
+     */
+
+    public function actividadesLista(Request $request, $id): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $entityManager = $this->getDoctrine()->getManager();
+//        $repository->findBy(array('name' => 'Registration'),array('name' => 'ASC'),1 ,0)[0];
+        $actividad = $entityManager->getRepository(Actividad::class)->findBy(array('nombre' => $id));
+        return $this->render('actividadconcreta.html.twig', [
+            'controller_name' => 'GimnasioController',
+            'actividades' => $actividad
+        ]);
+    }
+
 
     /**
      * @Route("/reservasAct/{id}", name="app_reservasAct")
@@ -178,7 +252,7 @@ class GimnasioController extends AbstractController
     /**
      * @Route("/actividadesCrear", name="app_actividadescrear")
      */
-    public function actividadesCrear(Request $request, SluggerInterface $slugger): Response
+    public function actividadesCrear(Request $request): Response
     {
         $roles = $this->getUser()->getRoles();
         if (in_array("ROLE_ADMIN", $roles)) {
@@ -186,26 +260,11 @@ class GimnasioController extends AbstractController
             $form = $this->createForm(ActividadType::class, $actividades);
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $imagen = $form->get('imagen')->getData();
-                if ($imagen) {
-                    $originalFilename = pathinfo($imagen->getClientOriginalName(), PATHINFO_FILENAME);
-                    $safeFilename = $slugger->slug($originalFilename);
-                    $newFilename = $safeFilename . '-' . uniqid() . '.' . $imagen->guessExtension();
-                    try {
-                        $imagen->move(
-                            $this->getParameter('imagen_directory'),
-                            $newFilename
-                        );
-                    } catch (FileException $e) {
-                        throw new \Exception('Ocurrió un error');
-                    }
-                    $actividades->setImagen($newFilename);
-                }
                 $entityManager = $this->getDoctrine()->getManager();
                 $actividades = $form->getData();
                 $entityManager->persist($actividades);
                 $entityManager->flush();
-                return $this->redirectToRoute('app_actividades');
+                return $this->redirectToRoute('app_actividadescrear');
             }
             return $this->render('actividades.html.twig', [
                 'controller_name' => 'actividades Controller',

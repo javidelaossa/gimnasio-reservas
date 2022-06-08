@@ -48,8 +48,8 @@ class RegistrationFormType extends AbstractType
                         'max' => 4096,
                     ]),
                 ],
+                'label' => 'Contraseña:'
             ])
-            ->add('Crear', SubmitType::class)
         ;
     }
 

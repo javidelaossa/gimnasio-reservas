@@ -27,6 +27,11 @@ class Sala
      */
     private $numero;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $aforo;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +57,18 @@ class Sala
     public function setNumero(int $numero): self
     {
         $this->numero = $numero;
+
+        return $this;
+    }
+
+    public function getAforo(): ?int
+    {
+        return $this->aforo;
+    }
+
+    public function setAforo(int $aforo): self
+    {
+        $this->aforo = $aforo;
 
         return $this;
     }
