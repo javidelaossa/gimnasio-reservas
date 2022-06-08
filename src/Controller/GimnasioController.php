@@ -5,12 +5,9 @@ namespace App\Controller;
 use App\Entity\Actividad;
 use App\Entity\Actividades;
 use App\Entity\Reserva;
-use App\Entity\Reservas;
 use App\Entity\Sala;
 use App\Entity\Usuario;
-use App\Form\ActividadesType;
 use App\Form\ActividadType;
-use App\Form\ReservasType;
 use App\Form\SalasType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,7 +25,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 class GimnasioController extends AbstractController
 {
     /**
-     * @Route("/", name="home")
+         * @Route("/", name="home")
      */
 
     public function home(): Response
@@ -44,7 +41,6 @@ class GimnasioController extends AbstractController
 
     public function index(Request $request, AuthenticationUtils $authenticationUtils): Response
     {
-//        $request = Request::createFromGlobals();
         $mensaje = $request->query->get('mensaje');
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $entityManager = $this->getDoctrine()->getManager();
@@ -58,6 +54,45 @@ class GimnasioController extends AbstractController
     }
 
     /**
+     * @Route("/asistencia", name="app_asistencia")
+     */
+
+    public function asistencia(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $entityManager = $this->getDoctrine()->getManager();
+        $asistencia = $entityManager->getRepository(Reserva::class)->find('1');
+        $dia = date('Y-m-d');
+        $date = '2022-06-07';
+//        $result = $date->format('Y-m-d');
+//        $reservas->setDia(\DateTime::createFromFormat('U', time()));
+//        print_r($asistencia);
+        return $this->render('asistencia.html.twig', [
+            'controller_name' => 'Asistencia',
+            'asistencia' => $asistencia,
+        ]);
+
+    }
+
+
+    /**
+     * @Route("/actividades", name="app_actividades")
+     */
+
+    public function actividades(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $entityManager = $this->getDoctrine()->getManager();
+        $actividades = $entityManager->getRepository(Actividades::class)->findAll();
+        return $this->render('actividades.html.twig', [
+            'controller_name' => 'Actividades',
+            'actividades' => $actividades,
+        ]);
+
+    }
+
+
+    /**
      * @Route("/reservasActdirect/{id}", name="app_reservasActdirect")
      */
 
@@ -68,10 +103,10 @@ class GimnasioController extends AbstractController
         $reservas = new Reserva();
         $actividad = $entityManager->getRepository(Actividad::class)->find($id);
 
-
         $reservas->setAsistencia(false);
         $reservas->setUsuario($this->getUser());
         $reservas->setActividad($actividad);
+        $reservas->setDia(\DateTime::createFromFormat('U', time()));
         $entityManager->persist($reservas);
         $entityManager->flush();
         return $this->redirectToRoute('app_gimnasio');
@@ -89,19 +124,17 @@ class GimnasioController extends AbstractController
         $reservas = new Reserva();
         $actividad = $entityManager->getRepository(Actividad::class)->find($id);
         $form = $this->createFormBuilder($reservas)
-//            ->add('usuario', EntityType::class, [
-//                'class' => Usuario::class
-//            ])
             ->add('save', SubmitType::class, array('label' => 'Crear Task'))
             ->getForm();
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $dia = date('Y-m-d');
             $entityManager = $this->getDoctrine()->getManager();
-//            $reservas = $form->getData();
             $reservas->setUsuario($this->getUser());
             $reservas->setActividad($actividad);
             $reservas->setAsistencia(false);
+            $reservas->setDia(\DateTime::createFromFormat('U', time()));
             $entityManager->persist($reservas);
             $entityManager->flush();
             return $this->redirectToRoute('app_gimnasio');
@@ -143,9 +176,9 @@ class GimnasioController extends AbstractController
     }
 
     /**
-     * @Route("/actividades", name="app_actividades")
+     * @Route("/actividadesCrear", name="app_actividadescrear")
      */
-    public function actividades(Request $request, SluggerInterface $slugger): Response
+    public function actividadesCrear(Request $request, SluggerInterface $slugger): Response
     {
         $roles = $this->getUser()->getRoles();
         if (in_array("ROLE_ADMIN", $roles)) {

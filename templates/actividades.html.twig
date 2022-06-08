@@ -1,15 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello GimnasioController!{% endblock %}
+{% block title %}Crear actividad{% endblock %}
 
 {% block body %}
-    <div class="example-wrapper">
-        <h1>Hello {{ controller_name }}! ✅</h1>
-        {% for actividad in rol %}
-            <h1>Hello {{ actividad }}! ✅</h1>
+    <div class="container">
+        <div class="row justify-content-center align-items-center vh-100">
+            {{ form_start(form) }}
+            <h2 class="col text-center m-2">Crear actividad</h2>
+            <div class="col text-center m-2">{{ form_row(form.nombre) }}</div>
+            <div class="row text-center">
+                <div class="col">{{ form_row(form.hinic) }}</div>
+                <div class="col">{{ form_row(form.hfin) }}</div>
 
-        {% endfor %}
-        {{ form_start(form) }}
-        {{ form_end(form) }}
+            </div>
+            <div class="col text-center m-2">{{ form_row(form.imagen) }}</div>
+            <div class="col text-center m-2">{{ form_row(form.descrip) }}</div>
+            <div class="col text-center m-2">{{ form_row(form.sala) }}</div>
+            <div class="col text-center m-2">{{ form_row(form.monitor) }}</div>
+            <div class="col text-center m-2">{{ form_row(form.Crear) }}</div>
+            {{ form_end(form) }}
+        </div>
     </div>
 {% endblock %}

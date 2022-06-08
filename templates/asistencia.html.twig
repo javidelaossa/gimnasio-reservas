@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello {{ controller_name }}!{% endblock %}
+
+{% block body %}
+    <div class="row">
+        {{ controller_name }}
+{#        {{ asistencia }}#}
+        {% for asist in asistencia %}
+            <div>
+                <p>
+                    {{ asist }}
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
