@@ -5,10 +5,10 @@
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
-/var/
-/vendor/
 ###< symfony/framework-bundle ###
 
+docker-compose.yml
+docker-compose.override.yml
 ###> symfony/phpunit-bridge ###
 .phpunit.result.cache
 /phpunit.xml
