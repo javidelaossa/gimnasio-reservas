@@ -177,13 +177,23 @@ class GimnasioController extends AbstractController
     public function actividadesLista(Request $request, $id): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $entityManager = $this->getDoctrine()->getManager();
-//        $repository->findBy(array('name' => 'Registration'),array('name' => 'ASC'),1 ,0)[0];
-        $actividad = $entityManager->getRepository(Actividad::class)->findBy(array('nombre' => $id));
-        return $this->render('actividadconcreta.html.twig', [
-            'controller_name' => 'GimnasioController',
-            'actividades' => $actividad
-        ]);
+        $em = $this->getDoctrine()->getManager();
+//        $con = $em->getConnection();
+//        $sql = 'SELECT * FROM actividad a
+//        WHERE a.nombre_id like :id';
+//        $stmt = $con->prepare($sql);
+//        $stmt->execute(['id' => '%' . addcslashes($id, '%_') . '%']);
+//        $actividad = $stmt->fetchAll();
+
+        $qb = $em->createQueryBuilder();
+        $query = $qb->select('u')
+            ->from(Actividad::class, 'u')
+            ->where('u.nombre = :id')
+            ->setParameter('id', $id)
+            ->getQuery();
+
+        return $this->render('gimnasio.html.twig', ['controller_name' => 'GimnasioController',
+            'actividades' => $query->getResult()]);
     }
 
 
@@ -191,14 +201,16 @@ class GimnasioController extends AbstractController
      * @Route("/reservasAct/{id}", name="app_reservasAct")
      */
 
-    public function reservaActividad(Request $request, $id): Response
+    public
+    function reservaActividad(Request $request, $id): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $entityManager = $this->getDoctrine()->getManager();
         $reservas = new Reserva();
         $actividad = $entityManager->getRepository(Actividad::class)->find($id);
         $form = $this->createFormBuilder($reservas)
-            ->add('save', SubmitType::class, array('label' => 'Crear Task'))
+            ->add('Reservar', SubmitType::class,
+                array('attr' => array('class' => 'btn btn-primary')))
             ->getForm();
 
         $form->handleRequest($request);
@@ -223,7 +235,8 @@ class GimnasioController extends AbstractController
     /**
      * @Route("/salas", name="app_salas")
      */
-    public function salas(Request $request): Response
+    public
+    function salas(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $roles = $this->getUser()->getRoles();
@@ -252,7 +265,8 @@ class GimnasioController extends AbstractController
     /**
      * @Route("/actividadesCrear", name="app_actividadescrear")
      */
-    public function actividadesCrear(Request $request): Response
+    public
+    function actividadesCrear(Request $request): Response
     {
         $roles = $this->getUser()->getRoles();
         if (in_array("ROLE_ADMIN", $roles)) {

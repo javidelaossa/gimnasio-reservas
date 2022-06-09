@@ -15,9 +15,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
+     * @ORM\Column(name="id", type="bigint", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 

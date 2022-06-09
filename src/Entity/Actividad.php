@@ -41,7 +41,9 @@ class Actividad
 
     /**
      * @ORM\ManyToOne(targetEntity=TipoAct::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn({
+     * @ORM\JoinColumn(name="nombre_id", referencedColumnName="id")
+     *     })
      */
     private $nombre;
 

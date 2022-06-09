@@ -4,14 +4,13 @@
 
 {% block body %}
     <div class="container">
-        <div class="row justify-content-center align-items-center vh-100 mt-3">
+        <div class="row mt-3">
             {% for actividad in actividades %}
-                {{ actividad }}
                 <div class="card m-3" style="width: 18rem;">
-{#                    <img src="{{ asset('uploads/imagenes/') }}{{ actividad.imagen }}" class="card-img-top" alt="imagen-clase">#}
+                    <img src="{{ asset('uploads/imagenes/') }}{{ actividad.nombre.imagen }}" class="card-img-top" alt="imagen-clase">
                     <div class="card-body">
-{#                        <h5 class="card-title">{{ actividad.nombre }}</h5>#}
-{#                        <p class="card-text">{{ actividad.descrip }}</p>#}
+                        <h5 class="card-title">{{ actividad.nombre.nombre }}</h5>
+                        <p class="card-text">{{ actividad.nombre.descrip }}</p>
                     </div>
                 </div>
             {% endfor %}
