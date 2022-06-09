@@ -62,17 +62,45 @@ class GimnasioController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $entityManager = $this->getDoctrine()->getManager();
-        $asistencia = $entityManager->getRepository(Reserva::class)->find('1');
         $dia = date('Y-m-d');
-        $date = '2022-06-07';
-//        $result = $date->format('Y-m-d');
-//        $reservas->setDia(\DateTime::createFromFormat('U', time()));
-//        print_r($asistencia);
+        $hora = date('H:00:00');
+        $horafin = date('H:00:00', strtotime('1 hour'));
+        $qb = $entityManager->createQueryBuilder();
+        $query = $qb->select('u')
+            ->from(Reserva::class, 'u')
+            ->where('u.dia = :dia')
+//            ->innerJoin(Actividad::class, 'a', 'WITH', 'a.hinic = :hinic')
+//            ->innerJoin(Usuario::class, 'p', 'WITH', 'p.id = :monitor')
+//            ->innerJoin(Actividad::class, 'a', 'WITH', 'a.monitor = :monitor')
+//            ->innerJoin(Actividad::class, 'a1', 'WITH', 'a1.hinic = :hinic ')
+//            ->innerJoin(Actividad::class, 'a2', 'WITH', 'a2.hfin = :hfin')
+            ->setParameter('dia', $dia)
+//            ->setParameter('hinic', $hora)
+//            ->setParameter('hfin', $horafin)
+//            ->setParameter('monitor', $this->getUser()->getId())
+            ->getQuery();
+
         return $this->render('asistencia.html.twig', [
             'controller_name' => 'Asistencia',
-            'asistencia' => $asistencia,
+            'asistencia' => $query->getResult(),
         ]);
 
+    }
+
+    /**
+     * @Route("/asistencia/{id}", name="app_confasistencia")
+     */
+
+    public function confirmarAsistencia(Request $request, $id): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $reservas = $entityManager->getRepository(Reserva::class)->find($id);
+        $reservas->setAsistencia(true);
+        $entityManager->persist($reservas);
+        $entityManager->flush();
+        return $this->redirectToRoute('app_asistencia');
     }
 
 

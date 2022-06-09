@@ -3,15 +3,35 @@
 {% block title %}Hello {{ controller_name }}!{% endblock %}
 
 {% block body %}
-    <div class="row">
-        {{ controller_name }}
-{#        {{ asistencia }}#}
-        {% for asist in asistencia %}
-            <div>
-                <p>
-                    {{ asist }}
-                </p>
-            </div>
-        {% endfor %}
+    <div class="container">
+        <div class="row">
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Actividad</th>
+                    <th scope="col">H.inicio</th>
+                    <th scope="col">H. fin</th>
+                    <th scope="col">Confirmar asistencia</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for asist in asistencia %}
+                    <tr>
+                        <th scope="row">{{ asist.id }}</th>
+                        <td>{{ asist.usuario.nombre }}</td>
+                        <td>{{ asist.actividad.nombre.nombre }}</td>
+                        <td>{{ asist.actividad.hinic|date('H:i') }}</td>
+                        <td>{{ asist.actividad.hfin|date('H:i') }}</td>
+                        <td><a href="asistencia/{{ asist.id }}">CONFIRMAR ASISTENCIA</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
     </div>
+
 {% endblock %}
