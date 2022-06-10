@@ -3,65 +3,131 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="row justify-content-center align-items-center vh-100">
-            <form method="post">
-                {% if error %}
-                    <div class="alert alert-danger">Debes de iniciar sesión</div>
-                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                {% endif %}
-
-                {% if app.user %}
-                    <div class="mb-3">
-                        Ya tienes la sesión iniciada {{ app.user.nombre }}, <a
-                                href="{{ path('app_logout') }}">Logout</a>
-                    </div>
-                {% endif %}
-
-                <h1 class="h3 mb-3 font-weight-normal">Iniciar sesión:</h1>
-                <div class="row">
-                    <div class="col-12">
-                        <label for="inputEmail">Correo: </label>
-                    </div>
-                    <div class="col-12">
-                        <input type="email" value="{{ last_username }}" name="email" id="inputEmail"
-                               class="form-control"
-                               autocomplete="email" required autofocus>
+    {% if error %}
+        <div class="alert alert-danger text-center" role="alert" id="alertaAdmin">
+            {{ error }}
+        </div>
+    {% endif %}
+    <div class="container vh-100">
+        <div class="d-flex justify-content-center h-100">
+            <div class="user_card">
+                <div class="d-flex justify-content-center">
+                    <div class="brand_logo_container">
+                        <img src="https://i.postimg.cc/nLcMSpkT/gym.png" class="brand_logo" alt="Logo">
                     </div>
                 </div>
+                <div class="d-flex justify-content-center form_container">
+                    <form method="post">
+                        <div class="input-group mb-3">
+                            <div class="input-group-append">
 
-                <div class="row">
-                    <div class="col-12">
-                        <label for="inputPassword">Contraseña: </label>
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <input type="email" value="{{ last_username }}" name="email" id="inputEmail"
+                                   class="form-control input_user" autocomplete="email" required autofocus
+                                   placeholder="Correo electronico">
+                            {#                            <input type="text" name="" class="form-control input_user" value="" placeholder="username"> #}
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            </div>
+                            <input type="password" name="password" id="inputPassword" class="form-control input_pass"
+                                   autocomplete="current-password" required placeholder="Contraseña">
+                            {#                            <input type="password" name="" class="form-control input_pass" value="" placeholder="password"> #}
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="customControlInline">
+                                <label class="custom-control-label" for="customControlInline">Recordarme</label>
+                            </div>
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                        </div>
+                        <div class="d-flex justify-content-center mt-3 login_container">
+                            <button type="submit" name="button" class="btn login_btn">Iniciar sesión</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="mt-4">
+                    <div class="d-flex justify-content-center links">
+                        ¿No tienes cuenta aún? <a href="{{ path ('app_register') }}" class="ml-2"> Registrarse</a>
                     </div>
-                    <div class="col-12">
-
-                        <input type="password" name="password" id="inputPassword" class="form-control"
-                               autocomplete="current-password" required>
-                    </div>
                 </div>
-
-
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-                {#
-                Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-                See https://symfony.com/doc/current/security/remember_me.html
-
-                <div class="checkbox mb-3">
-                    <label>
-                        <input type="checkbox" name="_remember_me"> Remember me
-                    </label>
-                </div>
-                #}
-                <div class="text-center">
-
-                    <button class="btn btn-lg btn-primary" type="submit">
-                        Iniciar sesión
-                    </button>
-                </div>
-            <a href="{{ path ('app_register') }}">¿No dispones de cuenta aún?</a>
-            </form>
+            </div>
         </div>
     </div>
+
+    <script !src="">
+        let alertaAdmin = document.getElementById('alertaAdmin');
+
+        setTimeout(function () {
+            alertaAdmin.remove();
+        }, 5000);
+    </script>
+
+
+
+
+    {#    <div class="container"> #}
+    {#        <div class="row justify-content-center align-items-center vh-100"> #}
+    {#            <form method="post"> #}
+    {#                {% if error %} #}
+    {#                    <div class="alert alert-danger">Debes de iniciar sesión</div> #}
+    {#                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div> #}
+    {#                {% endif %} #}
+
+    {#                {% if app.user %} #}
+    {#                    <div class="mb-3"> #}
+    {#                        Ya tienes la sesión iniciada {{ app.user.nombre }}, <a #}
+    {#                                href="{{ path('app_logout') }}">Logout</a> #}
+    {#                    </div> #}
+    {#                {% endif %} #}
+
+    {#                <h1 class="h3 mb-3 font-weight-normal">Iniciar sesión:</h1> #}
+    {#                <div class="row"> #}
+    {#                    <div class="col-12"> #}
+    {#                        <label for="inputEmail">Correo: </label> #}
+    {#                    </div> #}
+    {#                    <div class="col-12"> #}
+    {#                        <input type="email" value="{{ last_username }}" name="email" id="inputEmail" #}
+    {#                               class="form-control" #}
+    {#                               autocomplete="email" required autofocus> #}
+    {#                    </div> #}
+    {#                </div> #}
+
+    {#                <div class="row"> #}
+    {#                    <div class="col-12"> #}
+    {#                        <label for="inputPassword">Contraseña: </label> #}
+    {#                    </div> #}
+    {#                    <div class="col-12"> #}
+
+    {#                        <input type="password" name="password" id="inputPassword" class="form-control" #}
+    {#                               autocomplete="current-password" required> #}
+    {#                    </div> #}
+    {#                </div> #}
+
+
+    {#                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"> #}
+
+    {#                #}{# #}
+    {#                Uncomment this section and add a remember_me option below your firewall to activate remember me functionality. #}
+    {#                See https://symfony.com/doc/current/security/remember_me.html #}
+
+    {#                <div class="checkbox mb-3"> #}
+    {#                    <label> #}
+    {#                        <input type="checkbox" name="_remember_me"> Remember me #}
+    {#                    </label> #}
+    {#                </div> #}
+    {#                #}
+    {#                <div class="text-center"> #}
+
+    {#                    <button class="btn btn-lg btn-primary" type="submit"> #}
+    {#                        Iniciar sesión #}
+    {#                    </button> #}
+    {#                </div> #}
+    {#            <a href="{{ path ('app_register') }}">¿No dispones de cuenta aún?</a> #}
+    {#            </form> #}
+    {#        </div> #}
+    {#    </div> #}
 {% endblock %}

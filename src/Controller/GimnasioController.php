@@ -43,15 +43,21 @@ class GimnasioController extends AbstractController
 
     public function index(Request $request, AuthenticationUtils $authenticationUtils): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $mensaje = $request->query->get('mensaje');
-        $entityManager = $this->getDoctrine()->getManager();
-        $actividades = $entityManager->getRepository(Actividad::class)->findAll();
-        return $this->render('gimnasio.html.twig', [
-            'controller_name' => 'GimnasioController',
-            'actividades' => $actividades,
-            'mensaje' => $mensaje
-        ]);
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            $mensaje = $request->query->get('mensaje');
+            $entityManager = $this->getDoctrine()->getManager();
+            $actividades = $entityManager->getRepository(Actividad::class)->findAll();
+            return $this->render('gimnasio.html.twig', [
+                'controller_name' => 'GimnasioController',
+                'actividades' => $actividades,
+                'mensaje' => $mensaje
+            ]);
+        } else {
+            return $this->redirectToRoute('app_login', [
+                'error' => 'Necesitas ser admin para entrar',
+            ]);
+        }
+
     }
 
     /**
@@ -60,30 +66,35 @@ class GimnasioController extends AbstractController
 
     public function asistencia(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $entityManager = $this->getDoctrine()->getManager();
-        $dia = date('Y-m-d');
-        $hora = date('H:00:00');
-        $horafin = date('H:00:00', strtotime('1 hour'));
-        $qb = $entityManager->createQueryBuilder();
-        $query = $qb->select('u')
-            ->from(Reserva::class, 'u')
-            ->where('u.dia = :dia')
+        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_MONITOR')) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $dia = date('Y-m-d');
+            $hora = date('H:00:00');
+            $horafin = date('H:00:00', strtotime('1 hour'));
+            $qb = $entityManager->createQueryBuilder();
+            $query = $qb->select('u')
+                ->from(Reserva::class, 'u')
+                ->where('u.dia = :dia')
 //            ->innerJoin(Actividad::class, 'a', 'WITH', 'a.hinic = :hinic')
 //            ->innerJoin(Usuario::class, 'p', 'WITH', 'p.id = :monitor')
 //            ->innerJoin(Actividad::class, 'a', 'WITH', 'a.monitor = :monitor')
 //            ->innerJoin(Actividad::class, 'a1', 'WITH', 'a1.hinic = :hinic ')
 //            ->innerJoin(Actividad::class, 'a2', 'WITH', 'a2.hfin = :hfin')
-            ->setParameter('dia', $dia)
 //            ->setParameter('hinic', $hora)
 //            ->setParameter('hfin', $horafin)
 //            ->setParameter('monitor', $this->getUser()->getId())
-            ->getQuery();
+                ->setParameter('dia', $dia)
+                ->getQuery();
 
-        return $this->render('asistencia.html.twig', [
-            'controller_name' => 'Asistencia',
-            'asistencia' => $query->getResult(),
-        ]);
+            return $this->render('asistencia.html.twig', [
+                'controller_name' => 'Asistencia',
+                'asistencia' => $query->getResult(),
+            ]);
+        } else {
+            return $this->redirectToRoute('app_gimnasio', [
+                'mensaje' => 'Necesitas ser admin para entrar',
+            ]);
+        }
 
     }
 
@@ -93,14 +104,18 @@ class GimnasioController extends AbstractController
 
     public function confirmarAsistencia(Request $request, $id): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $entityManager = $this->getDoctrine()->getManager();
-
-        $reservas = $entityManager->getRepository(Reserva::class)->find($id);
-        $reservas->setAsistencia(true);
-        $entityManager->persist($reservas);
-        $entityManager->flush();
-        return $this->redirectToRoute('app_asistencia');
+        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_MONITOR')) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $reservas = $entityManager->getRepository(Reserva::class)->find($id);
+            $reservas->setAsistencia(true);
+            $entityManager->persist($reservas);
+            $entityManager->flush();
+            return $this->redirectToRoute('app_asistencia');
+        } else {
+            return $this->redirectToRoute('app_gimnasio', [
+                'mensaje' => 'Necesitas ser admin para entrar',
+            ]);
+        }
     }
 
 
@@ -110,12 +125,19 @@ class GimnasioController extends AbstractController
 
     public function actividades(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $entityManager = $this->getDoctrine()->getManager();
-        $actividades = $entityManager->getRepository(TipoAct::class)->findAll();
-        return $this->render('actividadeslista.html.twig', [
-            'actividades' => $actividades,
-        ]);
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $actividades = $entityManager->getRepository(TipoAct::class)->findAll();
+            return $this->render('actividadeslista.html.twig', [
+                'actividades' => $actividades,
+            ]);
+
+        } else {
+            return $this->redirectToRoute('app_login', [
+                'error' => 'Necesitas ser admin para entrar',
+            ]);
+        }
+
 
     }
 
@@ -125,12 +147,17 @@ class GimnasioController extends AbstractController
 
     public function crearActividadesInd(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $entityManager = $this->getDoctrine()->getManager();
-        $actividades = $entityManager->getRepository(Actividades::class)->findAll();
-        return $this->render('actividadeslista.html.twig', [
-            'actividades' => $actividades,
-        ]);
+        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_MONITOR')) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $actividades = $entityManager->getRepository(Actividades::class)->findAll();
+            return $this->render('actividadeslista.html.twig', [
+                'actividades' => $actividades,
+            ]);
+        } else {
+            return $this->redirectToRoute('app_gimnasio', [
+                'mensaje' => 'Necesitas ser admin para entrar',
+            ]);
+        }
     }
 
     /**
@@ -139,9 +166,7 @@ class GimnasioController extends AbstractController
 
     public function crearActividadesIndForm(Request $request, SluggerInterface $slugger): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $roles = $this->getUser()->getRoles();
-        if (in_array("ROLE_ADMIN", $roles)) {
+        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_MONITOR')) {
             $tipoAct = new TipoAct();
             $form = $this->createForm(TipoActType::class, $tipoAct);
             $form->handleRequest($request);
@@ -183,18 +208,23 @@ class GimnasioController extends AbstractController
 
     public function reservaActividaddirect(Request $request, $id): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $entityManager = $this->getDoctrine()->getManager();
-        $reservas = new Reserva();
-        $actividad = $entityManager->getRepository(Actividad::class)->find($id);
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $reservas = new Reserva();
+            $actividad = $entityManager->getRepository(Actividad::class)->find($id);
 
-        $reservas->setAsistencia(false);
-        $reservas->setUsuario($this->getUser());
-        $reservas->setActividad($actividad);
-        $reservas->setDia(\DateTime::createFromFormat('U', time()));
-        $entityManager->persist($reservas);
-        $entityManager->flush();
-        return $this->redirectToRoute('app_gimnasio');
+            $reservas->setAsistencia(false);
+            $reservas->setUsuario($this->getUser());
+            $reservas->setActividad($actividad);
+            $reservas->setDia(\DateTime::createFromFormat('U', time()));
+            $entityManager->persist($reservas);
+            $entityManager->flush();
+            return $this->redirectToRoute('app_gimnasio');
+        } else {
+            return $this->redirectToRoute('app_login', [
+                'error' => 'Necesitas ser admin para entrar',
+            ]);
+        }
 
     }
 
@@ -204,24 +234,24 @@ class GimnasioController extends AbstractController
 
     public function actividadesLista(Request $request, $id): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $em = $this->getDoctrine()->getManager();
-//        $con = $em->getConnection();
-//        $sql = 'SELECT * FROM actividad a
-//        WHERE a.nombre_id like :id';
-//        $stmt = $con->prepare($sql);
-//        $stmt->execute(['id' => '%' . addcslashes($id, '%_') . '%']);
-//        $actividad = $stmt->fetchAll();
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
 
-        $qb = $em->createQueryBuilder();
-        $query = $qb->select('u')
-            ->from(Actividad::class, 'u')
-            ->where('u.nombre = :id')
-            ->setParameter('id', $id)
-            ->getQuery();
+            $em = $this->getDoctrine()->getManager();
+            $qb = $em->createQueryBuilder();
+            $query = $qb->select('u')
+                ->from(Actividad::class, 'u')
+                ->where('u.nombre = :id')
+                ->setParameter('id', $id)
+                ->getQuery();
 
-        return $this->render('gimnasio.html.twig', ['controller_name' => 'GimnasioController',
-            'actividades' => $query->getResult()]);
+            return $this->render('gimnasio.html.twig', ['controller_name' => 'GimnasioController',
+                'actividades' => $query->getResult()]);
+
+        } else {
+            return $this->redirectToRoute('app_login', [
+                'error' => 'Necesitas ser admin para entrar',
+            ]);
+        }
     }
 
 
@@ -229,46 +259,49 @@ class GimnasioController extends AbstractController
      * @Route("/reservasAct/{id}", name="app_reservasAct")
      */
 
-    public
-    function reservaActividad(Request $request, $id): Response
+    public function reservaActividad(Request $request, $id): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $entityManager = $this->getDoctrine()->getManager();
-        $reservas = new Reserva();
-        $actividad = $entityManager->getRepository(Actividad::class)->find($id);
-        $form = $this->createFormBuilder($reservas)
-            ->add('Reservar', SubmitType::class,
-                array('attr' => array('class' => 'btn btn-primary')))
-            ->getForm();
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $dia = date('Y-m-d');
             $entityManager = $this->getDoctrine()->getManager();
-            $reservas->setUsuario($this->getUser());
-            $reservas->setActividad($actividad);
-            $reservas->setAsistencia(false);
-            $reservas->setDia(\DateTime::createFromFormat('U', time()));
-            $entityManager->persist($reservas);
-            $entityManager->flush();
-            return $this->redirectToRoute('app_gimnasio');
+            $reservas = new Reserva();
+            $actividad = $entityManager->getRepository(Actividad::class)->find($id);
+            $form = $this->createFormBuilder($reservas)
+                ->add('Reservar', SubmitType::class,
+                    array('attr' => array('class' => 'btn btn-primary')))
+                ->getForm();
+
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $dia = date('Y-m-d');
+                $entityManager = $this->getDoctrine()->getManager();
+                $reservas->setUsuario($this->getUser());
+                $reservas->setActividad($actividad);
+                $reservas->setAsistencia(false);
+                $reservas->setDia(\DateTime::createFromFormat('U', time()));
+                $entityManager->persist($reservas);
+                $entityManager->flush();
+                return $this->redirectToRoute('app_gimnasio');
+            }
+            return $this->render('reservas.html.twig', [
+                'controller_name' => $id,
+                'actividad' => $actividad,
+                'form' => $form->createView()
+            ]);
+
+        } else {
+            return $this->redirectToRoute('app_login', [
+                'error' => 'Necesitas ser admin para entrar',
+            ]);
         }
-        return $this->render('reservas.html.twig', [
-            'controller_name' => $id,
-            'actividad' => $actividad,
-            'form' => $form->createView()
-        ]);
     }
 
     /**
      * @Route("/salas", name="app_salas")
      */
-    public
-    function salas(Request $request): Response
+    public function salas(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $roles = $this->getUser()->getRoles();
-        if (in_array("ROLE_ADMIN", $roles) || in_array("ROLE_MONITOR", $roles)) {
+        if ($this->isGranted('ROLE_ADMIN')) {
             $sala = new Sala();
             $form = $this->createForm(SalasType::class, $sala);
             $form->handleRequest($request);
@@ -296,8 +329,7 @@ class GimnasioController extends AbstractController
     public
     function actividadesCrear(Request $request): Response
     {
-        $roles = $this->getUser()->getRoles();
-        if (in_array("ROLE_ADMIN", $roles)) {
+        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_MONITOR')) {
             $actividades = new Actividad();
             $form = $this->createForm(ActividadType::class, $actividades);
             $form->handleRequest($request);
@@ -310,7 +342,6 @@ class GimnasioController extends AbstractController
             }
             return $this->render('actividades.html.twig', [
                 'controller_name' => 'actividades Controller',
-                'rol' => $roles,
                 'form' => $form->createView()
             ]);
         } else {
@@ -318,7 +349,6 @@ class GimnasioController extends AbstractController
                 'mensaje' => 'Necesitas ser admin para entrar',
             ]);
         }
-
     }
 
 }

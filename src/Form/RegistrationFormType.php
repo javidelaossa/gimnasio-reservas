@@ -21,23 +21,36 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('nombre', null, [
-                'label' => 'Tu nombre:'
+                'attr' => array(
+                    'placeholder' => 'Nombre:',
+                    'class' => 'form-control input_user'
+                ),
+                'label' => false
             ])
-            ->add('email', EmailType::class,[
-                'label' => 'Correo electrónico:'
+            ->add('email', EmailType::class, [
+                'attr' => array(
+                    'placeholder' => 'Correo electronico:',
+                    'class' => 'form-control input_user'
+                ),
+                'label' => false,
             ])
             ->add('imagen', FileType::class)
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue([
-                        'message' => 'You should agree to our terms.',
+                        'message' => 'Debes de aceptar las condiciones',
                     ]),
                 ],
+                'label' => 'He leído los terminos y los acepto'
+
             ])
             ->add('plainPassword', PasswordType::class, [
+                'label' => false,
                 'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
+                'attr' => ['autocomplete' => 'new-password',
+                    'placeholder' => 'Contraseña:',
+                    'class' => 'form-control input_user'],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Introduzca una contraseña',
@@ -47,10 +60,12 @@ class RegistrationFormType extends AbstractType
                         'minMessage' => 'El campo debe tener como mínimo {{ limit }} caracteres',
                         'max' => 4096,
                     ]),
-                ],
-                'label' => 'Contraseña:'
+                ]
             ])
-        ;
+            ->add('Crear', SubmitType::class, [
+                'label' => 'Crear cuenta',
+                'attr' => ['class' => 'btn login_btn text-center']
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
